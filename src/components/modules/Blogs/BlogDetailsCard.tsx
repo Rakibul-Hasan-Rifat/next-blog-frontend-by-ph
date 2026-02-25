@@ -9,24 +9,24 @@ export default async function BlogDetailsCard({ blog }: { blog: any }) {
   }
 
   return (
-    <main className="max-w-4xl mx-auto py-30 px-4">
+    <main className="max-w-7xl mx-auto py-30 px-4">
       <h1 className="text-5xl font-bold mb-6">{blog?.title}</h1>
 
       <div className="flex items-center gap-4 mb-8">
         <Image
           src={
-            blog.author.picture ||
+            blog.user.picture ||
             "https://cdn-icons-png.flaticon.com/512/9385/9385289.png"
           }
-          alt={blog?.author?.name}
+          alt={blog?.user?.name}
           width={48}
           height={48}
           className="rounded-full"
         />
         <div>
           <p className="font-semibold">
-            {blog.author.name}{" "}
-            {blog.author.isVerified && (
+            {blog.user.name}{" "}
+            {blog.user.isVerified && (
               <span className="inline-block ml-1 text-blue-500">✔</span>
             )}
           </p>
@@ -47,7 +47,7 @@ export default async function BlogDetailsCard({ blog }: { blog: any }) {
         </div>
       )}
 
-      <article className="prose prose-lg max-w-none">
+      <article className="prose prose-lg max-w-none mt-8 text-justify font-light text-2xl text-gray-500">
         <p>{blog.content}</p>
       </article>
     </main>

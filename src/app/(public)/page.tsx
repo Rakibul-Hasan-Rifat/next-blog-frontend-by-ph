@@ -14,7 +14,6 @@ export default async function HomePage() {
     }
   });
   const { data: posts } = await response.json();
-  console.log(posts);
 
   return (
     <div>
@@ -23,7 +22,7 @@ export default async function HomePage() {
         <h2 className="text-center my-5 text-4xl font-bold">Featured Posts</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-7xl mx-auto my-10 p-4">
           {
-            posts.map((post: TPost) => <BlogCard key={post.id} post={post} />)
+            posts.slice(0, 3).map((post: TPost) => <BlogCard key={post.id} post={post} />)
           }
         </div>
       </div>
