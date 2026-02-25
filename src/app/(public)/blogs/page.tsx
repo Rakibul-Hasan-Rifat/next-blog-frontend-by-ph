@@ -1,5 +1,11 @@
-import BlogCard from "@/components/modules/Blogs/BlogCard";
 import { TPost } from "@/types";
+import { Metadata } from "next";
+import BlogCard from "@/components/modules/Blogs/BlogCard";
+
+export const metadata: Metadata = {
+  title: "All Blogs - Next Blog",
+  description: "Explore our collection of insightful and engaging blog posts on various topics. Stay informed and inspired with our regularly updated content.",
+}
 
 const AllBlogsPage = async () => {
 
