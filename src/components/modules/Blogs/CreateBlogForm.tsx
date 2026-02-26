@@ -3,47 +3,52 @@ import { createPost } from "@/actions/post";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { Field, FieldLabel } from '@/components/ui/field';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const CreateBlogForm = () => {
     return (
-        <Form action={createPost} className="flex flex-col gap-6 w-full max-w-6xl mx-auto p-4 text-lg border rounded-md shadow-md">
-            <Field>
+        <Form action={createPost} className="flex flex-col gap-4 w-full max-w-4xl mx-auto mb-6 p-4 text-lg border rounded-md shadow-md">
+            <Field className="flex flex-col gap-2">
                 <FieldLabel htmlFor="input-field-username">Title</FieldLabel>
                 <Input
-                    id="input-field-username"
                     type="text"
+                    name="title"
+                    id="input-field-username"
                     placeholder="Enter blog title"
                 />
             </Field>
-            <Field>
+            <Field className="flex flex-col gap-2">
                 <FieldLabel htmlFor="input-field-thumbnail">Thumbnail</FieldLabel>
                 <Input
-                    id="input-field-thumbnail"
                     type="text"
+                    name="thumbnail"
+                    id="input-field-thumbnail"
                     placeholder="Enter blog thumbnail URL"
                 />
             </Field>
-            <Field>
+            <Field className="flex flex-col gap-2">
                 <FieldLabel htmlFor="input-field-content">Content</FieldLabel>
-                <Input
+                <Textarea
+                    name="content"
                     id="input-field-content"
-                    type="text"
-                    placeholder="Enter blog content"
+                    placeholder="Type your blog content here."
+                    className="text-xl"                    
                 />
             </Field>
-            <Field>
+            <Field className="flex flex-col gap-2">
                 <FieldLabel htmlFor="input-field-tags">Tags (Comma separated [,])</FieldLabel>
                 <Input
-                    id="input-field-tags"
                     type="text"
+                    name="tags"
+                    id="input-field-tags"
                     placeholder="Enter blog tags (comma separated)"
                 />
             </Field>
-            <Field className="w-full max-w-xs flex gap-5 items-center">
+            <Field className="flex gap-2">
                 <FieldLabel htmlFor="input-field-content">Featured</FieldLabel>
-                <RadioGroup defaultValue="comfortable" className="w-fit">
+                <RadioGroup defaultValue="false" className="w-fit" name="isFeatured">
                     <div className="flex gap-3">
                         <div className="flex items-center gap-2">
                             <RadioGroupItem value={"true"} id="r1" />
@@ -56,7 +61,7 @@ const CreateBlogForm = () => {
                     </div>
                 </RadioGroup>
             </Field>
-            <Button type="submit" variant="outline" size="lg" className="text-xl">Create Blog</Button>
+            <Button type="submit" variant="outline" size="lg" className="text-lg cursor-pointer">Create Blog</Button>
         </Form>
     )
 }
