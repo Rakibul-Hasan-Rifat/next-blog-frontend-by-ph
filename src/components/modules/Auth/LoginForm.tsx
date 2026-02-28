@@ -43,7 +43,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                     <CardTitle className="text-3xl text-center mb-1 font-light">Login to your account</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <form>
+                    <form onSubmit={form.handleSubmit(onSubmit)}>
                         <FieldGroup>
                             <Controller
                                 name="email"
