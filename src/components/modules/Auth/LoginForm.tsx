@@ -1,5 +1,6 @@
 "use client";
 
+import { signIn } from "next-auth/react";
 import * as z from "zod"
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -34,6 +35,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     function onSubmit(data: z.infer<typeof formSchema>) {
         // Do something with the form values.
         console.log(data)
+    }
+
+    const handleGoogleLogin = (provider: 'google' | 'github') => {
+        console.log(`Signin with ${provider}`);
     }
 
     return (
@@ -86,13 +91,15 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                             <Field>
                                 <Button type="submit">Login</Button>
                                 <Separator decorative={true} />
-                                <Button variant="outline" type="button">
+                                <Button variant="outline" type="button" onClick={() => signIn('google', {
+                                    callbackUrl: '/dashboard'
+                                })}>
                                     <FcGoogle />
                                     <span>
                                         Login with Google
                                     </span>
                                 </Button>
-                                <Button variant="outline" type="button">
+                                <Button variant="outline" type="button" onClick={() => handleGoogleLogin('github')}>
                                     <FaGithub />
                                     <span>
                                         Login with Github

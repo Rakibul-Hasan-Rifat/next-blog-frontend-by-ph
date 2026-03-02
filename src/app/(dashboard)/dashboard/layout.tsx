@@ -8,7 +8,7 @@ export default function DashboardLayout({
   return (
     <main className="min-h-dvh flex gap-4">
       <Sidebar />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 flex items-center justify-center">{children}</main>
     </main>
   );
 }
