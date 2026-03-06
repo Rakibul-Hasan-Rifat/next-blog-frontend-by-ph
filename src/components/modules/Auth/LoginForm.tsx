@@ -1,9 +1,9 @@
 "use client";
 
-import { signIn } from "next-auth/react";
 import * as z from "zod"
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa6";
 import { Input } from "@/components/ui/input";
@@ -13,8 +13,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { loginUser } from "@/actions/auth";
+import toast from "react-hot-toast";
 
-const formSchema = z.object({
+export const loginFormSchema = z.object({
     email: z
         .email("Please enter a valid email address."),
     password: z
@@ -24,17 +26,33 @@ const formSchema = z.object({
 })
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+
+    const form = useForm<z.infer<typeof loginFormSchema>>({
+        resolver: zodResolver(loginFormSchema),
         defaultValues: {
             email: "",
             password: "",
         },
     })
 
-    function onSubmit(data: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        console.log(data)
+    async function onSubmit(data: z.infer<typeof loginFormSchema>) {
+        try {
+            // const res = await loginUser(data)
+            // if (res?.id) {
+            //     toast.success("User login is successful.")
+            //     router.push('/blogs')
+            // } else {
+            //     toast.error("User login is failed.")
+            // }
+            console.log(data);
+            signIn("credentials", {
+                ...data,
+                callbackUrl: "/dashboard"
+            })
+            toast.success("Login successful")
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     const handleGoogleLogin = (provider: 'google' | 'github') => {
@@ -48,7 +66,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                     <CardTitle className="text-3xl text-center mb-1 font-light">Login to your account</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <form onSubmit={form.handleSubmit(onSubmit)}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="mb-4">
                         <FieldGroup>
                             <Controller
                                 name="email"
@@ -90,27 +108,29 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
 
                             <Field>
                                 <Button type="submit">Login</Button>
-                                <Separator decorative={true} />
-                                <Button variant="outline" type="button" onClick={() => signIn('google', {
-                                    callbackUrl: '/dashboard'
-                                })}>
-                                    <FcGoogle />
-                                    <span>
-                                        Login with Google
-                                    </span>
-                                </Button>
-                                <Button variant="outline" type="button" onClick={() => handleGoogleLogin('github')}>
-                                    <FaGithub />
-                                    <span>
-                                        Login with Github
-                                    </span>
-                                </Button>
-                                <FieldDescription className="text-center">
-                                    Don&apos;t have an account? <Link href="/register">Sign up</Link>
-                                </FieldDescription>
                             </Field>
                         </FieldGroup>
                     </form>
+                    <Separator decorative={true} />
+                    <div className="flex justify-between items-center gap-2 mt-4">
+                        <Button variant="outline" type="button" className="flex-1" onClick={() => signIn('google', {
+                            callbackUrl: '/dashboard'
+                        })}>
+                            <FcGoogle />
+                            <span>
+                                Login with Google
+                            </span>
+                        </Button>
+                        <Button variant="outline" type="button" className="flex-1" onClick={() => handleGoogleLogin('github')}>
+                            <FaGithub />
+                            <span>
+                                Login with Github
+                            </span>
+                        </Button>
+                    </div>
+                    <FieldDescription className="py-3 text-right">
+                        Don&apos;t have an account? <Link href="/register">Sign up</Link>
+                    </FieldDescription>
                 </CardContent>
             </Card>
         </div>

@@ -2,9 +2,12 @@
 
 import * as z from "zod";
 import Link from "next/link";
+import toast from "react-hot-toast";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa6";
+import { useRouter } from 'next/navigation';
 import { Input } from "@/components/ui/input";
+import { registerUser } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Controller, useForm } from "react-hook-form";
@@ -23,34 +26,45 @@ import {
     FieldLabel,
 } from "@/components/ui/field"
 
-const formSchema = z.object({
-    name: z
-        .string()
-        .min(3, "Name must have at least 3 characters.")
-        .max(24, "Name must be at most 24 characters."),
-    email: z
-        .email("Please enter a valid email address."),
-    password: z
-        .string()
-        .min(6, "Password should contain at least 6 characters."),
-    confirmPassword: z
-        .string().min(6, "Password must have 6 characters at least.")
-})
+export const registerFormSchema = z
+    .object({
+        name: z
+            .string()
+            .min(3, "Name must have at least 3 characters.")
+            .max(24, "Name must be at most 24 characters."),
+        email: z
+            .email("Please enter a valid email address."),
+        password: z
+            .string()
+            .min(6, "Password should contain at least 6 characters."),
+        phone: z
+            .string().min(11, "Phone must have 11 characters at least.")
+    })
 
 export default function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const router = useRouter();
+    const form = useForm<z.infer<typeof registerFormSchema>>({
+        resolver: zodResolver(registerFormSchema),
         defaultValues: {
             name: "",
             email: "",
             password: "",
-            confirmPassword: ""
+            phone: ""
         }
     })
 
-    const onSubmit = (data: z.infer<typeof formSchema>) => {
-        console.log(data);
+    const onSubmit = async (data: z.infer<typeof registerFormSchema>) => {
+        try {
+            const result = await registerUser(data);
+            if (result?.id) {
+                toast.success("User registration is successful.")
+                router.push('/login')
+            }
+        } catch (error: unknown) {
+            console.log(error);
+            toast.error('Something went wrong during registration of the user.')
+        }
     }
 
     return (
@@ -59,7 +73,7 @@ export default function SignupForm({ ...props }: React.ComponentProps<typeof Car
                 <CardTitle className="text-3xl text-center mb-1 font-light">Create an account</CardTitle>
             </CardHeader>
             <CardContent>
-                <form onSubmit={form.handleSubmit(onSubmit)}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="mb-4">
                     <FieldGroup className="gap-4">
                         <Controller
                             name="name"
@@ -105,35 +119,42 @@ export default function SignupForm({ ...props }: React.ComponentProps<typeof Car
 
                             )}
                         />
+                        <Controller
+                            name="phone"
+                            control={form.control}
+                            render={({ field, fieldState }) => (
+                                <Field>
+                                    <FieldLabel htmlFor="phone">
+                                        Phone Number
+                                    </FieldLabel>
+                                    <Input {...field} id={field.name} type="text" required autoComplete="off" aria-invalid={fieldState.invalid} />
+                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                </Field>
+                            )}
+                        />
                         <Field>
-                            <FieldLabel htmlFor="confirm-password">
-                                Confirm Password
-                            </FieldLabel>
-                            <Input id="confirm-password" type="password" required />
+                            <Button type="submit">Create Account</Button>
                         </Field>
-                        <FieldGroup>
-                            <Field>
-                                <Button type="submit">Create Account</Button>
-                                <Separator />
-                                <Button variant="outline" type="button">
-                                    <FcGoogle />
-                                    <span>
-                                        Sign up with Google
-                                    </span>
-                                </Button>
-                                <Button variant="outline" type="button">
-                                    <FaGithub />
-                                    <span>
-                                        Sign up with Github
-                                    </span>
-                                </Button>
-                                <FieldDescription className="px-6 text-center">
-                                    Already have an account? <Link href="/login">Sign in</Link>
-                                </FieldDescription>
-                            </Field>
-                        </FieldGroup>
                     </FieldGroup>
                 </form>
+                <Separator />
+                <div className="flex justify-between items-center gap-2 mt-4">
+                    <Button variant="outline" type="button" className="flex-1">
+                        <FcGoogle />
+                        <span>
+                            Sign up with Google
+                        </span>
+                    </Button>
+                    <Button variant="outline" type="button" className="flex-1">
+                        <FaGithub />
+                        <span>
+                            Sign up with Github
+                        </span>
+                    </Button>
+                </div>
+                <FieldDescription className="py-3 text-right">
+                    Already have an account? <Link href="/login">Sign in</Link>
+                </FieldDescription>
             </CardContent>
         </Card>
     )
